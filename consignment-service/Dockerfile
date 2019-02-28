@@ -9,6 +9,7 @@ FROM golang:alpine AS builder
 #Add Maintanier info
 LABEL maintainer="Gangadhar Pathipaka"
 
+#ADD . /go/src/go-docker/consignment-service
 # Install git.
 # Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
@@ -24,7 +25,7 @@ RUN go get -d -v ./...
 
 #Build the Binary with flags which will allow us to 
 #RUN this binary on Alpine.
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /go/bin/go-docker
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /go/bin/consignment-service
 
 #*********************************
 # STEP 2 build a small image 
@@ -37,11 +38,11 @@ FROM scratch
 #we pull the binary from the container named "builder", within 
 #this build context. this reaches into previous image and finds the binary we build
 #pulls it into this container. 
-COPY --from=builder /go/bin/go-docker /go/bin/go-docker
+COPY --from=builder /go/bin/consignment-service /go/bin/consignment-service
 
-EXPOSE 8080
+EXPOSE 9000
 
-#Run the go-docker Binary
+#Run the consignment-service Binary
 #run the binary buil in a separate container, with all of correct dependencies and 
 #run this libraries.
-ENTRYPOINT [ "/go/bin/go-docker" ]
+ENTRYPOINT [ "/go/bin/consignment-service" ]

@@ -2,15 +2,13 @@ package main
 
 import (
 	"context"
-	pb "go-docker/consignment-service/proto/consignment"
-	vesselPb "go-docker/vessel-service/proto/vessel"
 	"log"
 
-	"github.com/micro/go-micro"
-)
+	pb "github.com/gpathipaka/go-docker/consignment-service/proto/consignment"
 
-const (
-	port = ":8080"
+	vesselPb "github.com/gpathipaka/go-docker/vessel-service/proto/vessel"
+
+	"github.com/micro/go-micro"
 )
 
 //IRepository is
@@ -45,16 +43,17 @@ func (repo *Repository) Getall() []*pb.Consignment {
 
 func (s *server) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
 	//consignment, err := s.repo.Create(req)
+	log.Println("Server - Entered the CreateConsignment() with input weight.. ", req.Weight)
 	spec := &vesselPb.Specification{
 		Capacity:  req.Weight,
 		MaxWeight: int32(len(req.Containers)),
 	}
 	vesselResponse, err := s.vesselClient.FindAvailable(context.Background(), spec)
-	log.Printf("Found vessel: %s \n", vesselResponse.Vessel.Name)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
+	log.Printf("Found vessel: %s \n", vesselResponse.Vessel.Name)
 
 	// We set the VesselId as the vessel we got back from our
 	// vessel service

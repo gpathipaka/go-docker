@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"errors"
-	pb "go-docker/vessel-service/proto/vessel"
 	"log"
+
+	pb "github.com/gpathipaka/go-docker/vessel-service/proto/vessel"
 
 	"github.com/micro/go-micro"
 )
@@ -20,13 +21,27 @@ type service struct {
 	repo Repository
 }
 
-func (v *vesselRepository) FindAvailable(spec *pb.Specification) (*pb.Vessel, error) {
-
+func (repo *vesselRepository) FindAvailable(spec *pb.Specification) (*pb.Vessel, error) {
+	log.Println("FindAvailable(spec) start..")
+	for _, vessel := range repo.vessels {
+		if spec.Capacity <= vessel.Capacity && spec.MaxWeight <= vessel.MaxWeight {
+			return vessel, nil
+		}
+	}
+	log.Println("STEP 2")
 	return nil, errors.New("No vessel found by that spec")
 }
 
 func (s *service) FindAvailable(ctx context.Context, in *pb.Specification, out *pb.Response) error {
-
+	// Find the next available vessel
+	log.Println("FindAvailable(ctx, in, out) start..")
+	vessel, err := s.repo.FindAvailable(in)
+	if err != nil {
+		return err
+	}
+	log.Println("STEP 2", out, vessel)
+	// Set the vessel as part of the response message type
+	out.Vessel = vessel
 	return nil
 }
 func main() {
