@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	pb "github.com/gpathipaka/go-docker/consignment-service/proto/consignment"
+	pb "github.com/gpathipaka/go-docker/consignment-service-mgo/proto/consignment"
 
 	microclient "github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/cmd"
