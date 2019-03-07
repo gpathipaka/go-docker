@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	pb "github.com/gpathipaka/go-docker/consignment-service-mgo/proto/consignment"
+	pb "github.com/gpathipaka/go-docker/consignment-service/proto/consignment"
 
 	microclient "github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/cmd"
@@ -30,7 +30,7 @@ func parseFile(fileName string) (*pb.Consignment, error) {
 func createConsignment(client pb.ShippingServiceClient, cons *pb.Consignment) {
 	res, err := client.CreateConsignment(context.TODO(), cons)
 	if err != nil {
-		log.Printf("Could not Greet.... and ERROR Is \n %v", err)
+		log.Fatalf("Could not create: %v", err)
 		return
 	}
 	log.Println("Consignment has been created....", res.Created)
